@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flatcar Builder — Epic Progress Tracker</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --surface: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --muted: #8b949e;
+            --green: #3fb950;
+            --yellow: #d29922;
+            --red: #f85149;
+            --blue: #58a6ff;
+            --purple: #bc8cff;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        h2 { font-size: 1.3rem; margin: 2rem 0 1rem; color: var(--blue); }
+        h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: var(--muted); }
+        .subtitle { color: var(--muted); margin-bottom: 2rem; }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .stat-card .label { color: var(--muted); font-size: 0.85rem; }
+        .green { color: var(--green); }
+        .yellow { color: var(--yellow); }
+        .red { color: var(--red); }
+        .blue { color: var(--blue); }
+        .purple { color: var(--purple); }
+
+        .progress-bar {
+            background: var(--border);
+            border-radius: 6px;
+            height: 24px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+            display: flex;
+        }
+        .progress-bar .segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #fff;
+            transition: width 0.3s;
+        }
+        .seg-done { background: var(--green); }
+        .seg-spec { background: var(--blue); }
+        .seg-gated { background: var(--yellow); }
+        .seg-backlog { background: var(--border); color: var(--muted); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        th { background: var(--surface); color: var(--muted); font-weight: 600; }
+        tr:hover { background: rgba(88, 166, 255, 0.05); }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-done { background: rgba(63,185,80,0.2); color: var(--green); }
+        .badge-spec { background: rgba(88,166,255,0.2); color: var(--blue); }
+        .badge-gated { background: rgba(210,153,34,0.2); color: var(--yellow); }
+        .badge-backlog { background: rgba(139,148,158,0.2); color: var(--muted); }
+
+        .legend { display: flex; gap: 1.5rem; flex-wrap: wrap; margin: 1rem 0; font-size: 0.85rem; }
+        .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+        footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+        a { color: var(--blue); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Flatcar Builder — Epic Progress</h1>
+    <p class="subtitle">Open tracking of 385 epics across 27 architectural arcs. Updated 2026-07-01.</p>
+
+    <div class="stats">
+        <div class="stat-card"><div class="number green">243</div><div class="label">Implemented</div></div>
+        <div class="stat-card"><div class="number blue">25</div><div class="label">Spec ready</div></div>
+        <div class="stat-card"><div class="number yellow">28</div><div class="label">Gated (hw)</div></div>
+        <div class="stat-card"><div class="number">61</div><div class="label">Backlog</div></div>
+        <div class="stat-card"><div class="number purple">76</div><div class="label">Fitness gates</div></div>
+        <div class="stat-card"><div class="number">46k</div><div class="label">Rust LOC</div></div>
+    </div>
+
+    <h2>Overall Progress</h2>
+    <div class="progress-bar">
+        <div class="segment seg-done" style="width:63%">243 done (63%)</div>
+        <div class="segment seg-spec" style="width:7%">25</div>
+        <div class="segment seg-gated" style="width:7%">28</div>
+        <div class="segment seg-backlog" style="width:16%">61</div>
+    </div>
+    <div class="legend">
+        <div class="legend-item"><div class="legend-dot seg-done"></div> Implemented</div>
+        <div class="legend-item"><div class="legend-dot seg-spec"></div> Spec written, pending impl</div>
+        <div class="legend-item"><div class="legend-dot seg-gated"></div> Gated (needs amd64/QEMU/TPM)</div>
+        <div class="legend-item"><div class="legend-dot seg-backlog"></div> Backlog (no spec)</div>
+    </div>
+
+    <h2>Arcs Breakdown</h2>
+    <table>
+        <thead>
+            <tr><th>Arc</th><th>Epics</th><th>Theme</th><th>Status</th><th>Done</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>Product</td><td>49–257</td><td>Core platform (CLI, GUI, build pipeline, OTA, mesh, storage)</td><td><span class="badge badge-done">72%</span></td><td>155/216</td></tr>
+            <tr><td>A–T</td><td>258–319</td><td>DDD refactoring (hexagonal arch, 14 crates, fitness ratchets)</td><td><span class="badge badge-done">100%</span></td><td>62/62</td></tr>
+            <tr><td>U</td><td>320–331</td><td>Security / Trust-chain / Immutable (dm-verity, signatures)</td><td><span class="badge badge-gated">partial</span></td><td>5/12</td></tr>
+            <tr><td>V</td><td>332–341</td><td>Real-Time eBPF via Tetragon (in-kernel security)</td><td><span class="badge badge-gated">partial</span></td><td>3/10</td></tr>
+            <tr><td>W</td><td>342–344</td><td>Phase taxonomy anti-drift (TS/CI skew gates)</td><td><span class="badge badge-done">100%</span></td><td>3/3</td></tr>
+            <tr><td>X</td><td>345–349</td><td>Reproducible & Hermetic Build verification</td><td><span class="badge badge-done">100%</span></td><td>5/5</td></tr>
+            <tr><td>Y</td><td>350–355</td><td>Fleet Update Orchestration (canary/wave/rollback)</td><td><span class="badge badge-done">domain</span></td><td>5/6</td></tr>
+            <tr><td>Z</td><td>356–360</td><td>Continuous Supply-Chain Monitoring (CVE/SBOM loop)</td><td><span class="badge badge-done">100%</span></td><td>5/5</td></tr>
+            <tr><td>AA</td><td>361–366</td><td>TPM 2.0 Measured Boot & Remote Attestation</td><td><span class="badge badge-spec">spec</span></td><td>0/6</td></tr>
+            <tr><td>AB</td><td>367–372</td><td>Signed System Extensions & confext Lifecycle</td><td><span class="badge badge-spec">spec</span></td><td>0/6</td></tr>
+            <tr><td>AC</td><td>373–379</td><td>Zero-Trust Network & Service Mesh</td><td><span class="badge badge-spec">spec</span></td><td>0/7</td></tr>
+            <tr><td>AD</td><td>380–385</td><td>Storage Federation Resilience (YDB + IPFS DR)</td><td><span class="badge badge-spec">spec</span></td><td>0/6</td></tr>
+        </tbody>
+    </table>
+
+    <h2>What's Verified Here vs Gated</h2>
+    <h3>Verified on arm64 Mac (cargo test + openssl + bash -n)</h3>
+    <ul>
+        <li>All DDD fitness gates (76 tests enforcing architectural invariants)</li>
+        <li>Pure Rust domain models (trust-chain, rollout FSM, supply-chain monitor, reproducibility)</li>
+        <li>CLI commands (verify-trust-chain, sc-monitor, repro-check, slsa)</li>
+        <li>Openssl sign/verify roundtrips (artifact signatures, verity roothash)</li>
+        <li>Bash syntax validation (all scripts pass <code>bash -n</code>)</li>
+    </ul>
+    <h3>Gated on amd64 Linux + QEMU/K8s/TPM</h3>
+    <ul>
+        <li>dm-verity boot, A/B rollback (gptprio), Secure Boot (OVMF)</li>
+        <li>Tetragon in-kernel enforce, real-time export</li>
+        <li>TPM measured boot, seal/unseal, remote attestation</li>
+        <li>Fleet update with live update_engine</li>
+        <li>Kubernetes mTLS/policy enforcement (Cilium + Istio ambient)</li>
+        <li>YDB/IPFS federation failover</li>
+    </ul>
+
+    <h2>Architecture</h2>
+    <p>DDD hexagonal architecture with <strong>14 Rust crates</strong> (bounded contexts),
+       enforced by <strong>76 fitness tests</strong> including ratchet-based burn-down of legacy I/O leaks.
+       Domain logic is pure (no I/O); all external interactions through port traits with adapters.</p>
+    <table>
+        <thead><tr><th>Crate</th><th>LOC</th><th>Role</th></tr></thead>
+        <tbody>
+            <tr><td>bc-build</td><td>8,880</td><td>Build BC (SDK, emerge, disk, image, dm-verity)</td></tr>
+            <tr><td>bc-factory</td><td>8,789</td><td>Factory BC (catalog, SBOM, SLSA, advisories, Tetragon policies)</td></tr>
+            <tr><td>flatcar-core</td><td>7,801</td><td>Orchestration, ports, adapters, CQRS, fitness tests</td></tr>
+            <tr><td>bc-baremetal</td><td>4,351</td><td>PXE/DHCP/TFTP/health provisioning</td></tr>
+            <tr><td>temporal-app</td><td>3,739</td><td>Temporal worker (workflow, gRPC, activities)</td></tr>
+            <tr><td>cli</td><td>2,845</td><td>CLI frontend (clap)</td></tr>
+            <tr><td>ipfs-ctl</td><td>2,044</td><td>Storage Federation (IPFS + YDB)</td></tr>
+            <tr><td>bc-mesh</td><td>1,809</td><td>Service Mesh domain</td></tr>
+            <tr><td>flatcar-ota</td><td>1,724</td><td>OTA Omaha stack + fleet rollout</td></tr>
+            <tr><td>bc-shared-kernel</td><td>1,358</td><td>Shared Kernel (BuildEvent, BuildPhase, VOs)</td></tr>
+            <tr><td>bc-release</td><td>848</td><td>Release/Delivery + trust-chain</td></tr>
+            <tr><td>bc-deployment</td><td>691</td><td>Deployment orchestration</td></tr>
+            <tr><td>flatcar-server</td><td>485</td><td>Omaha server</td></tr>
+        </tbody>
+    </table>
+
+    <h2>Full Analysis</h2>
+    <p>Detailed breakdown: <a href="Итоговый-Анализ-Эпиков.md">Итоговый-Анализ-Эпиков.md</a> (Russian)</p>
+
+    <footer>
+        <p>Flatcar Builder &mdash; Declarative immutable Linux factory with verifiable supply-chain.</p>
+        <p>Source: <a href="https://github.com/nuculo/flatcar-builder">github.com/nuculo/flatcar-builder</a> (private) |
+           Tracker: <a href="https://github.com/yunusovt983-art/flatcar">github.com/yunusovt983-art/flatcar</a></p>
+        <p>Last updated: 2026-07-01 | 76 fitness gates green | 46k Rust LOC</p>
+    </footer>
+</body>
+</html>
