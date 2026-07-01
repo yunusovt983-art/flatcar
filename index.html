@@ -110,9 +110,55 @@
         footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
         a { color: var(--blue); text-decoration: none; }
         a:hover { text-decoration: underline; }
+
+        /* Navigation menu */
+        nav {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem 1.5rem;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        nav .nav-brand {
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-right: 1.5rem;
+            color: var(--text);
+        }
+        nav a {
+            color: var(--muted);
+            font-size: 0.85rem;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            transition: background 0.2s, color 0.2s;
+        }
+        nav a:hover {
+            background: rgba(88, 166, 255, 0.1);
+            color: var(--blue);
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
+    <nav>
+        <span class="nav-brand">Flatcar Builder</span>
+        <a href="#progress">Progress</a>
+        <a href="#arcs">Arcs</a>
+        <a href="#verified">Verified vs Gated</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#cost">Cost Estimation</a>
+        <a href="#analysis">Full Analysis</a>
+        <a href="https://github.com/yunusovt983-art/flatcar" target="_blank">GitHub</a>
+    </nav>
+
     <h1>Flatcar Builder — Epic Progress</h1>
     <p class="subtitle">Open tracking of 385 epics across 27 architectural arcs. Updated 2026-07-01.</p>
 
@@ -125,7 +171,7 @@
         <div class="stat-card"><div class="number">46k</div><div class="label">Rust LOC</div></div>
     </div>
 
-    <h2>Overall Progress</h2>
+    <h2 id="progress">Overall Progress</h2>
     <div class="progress-bar">
         <div class="segment seg-done" style="width:63%">243 done (63%)</div>
         <div class="segment seg-spec" style="width:7%">25</div>
@@ -139,7 +185,7 @@
         <div class="legend-item"><div class="legend-dot seg-backlog"></div> Backlog (no spec)</div>
     </div>
 
-    <h2>Arcs Breakdown</h2>
+    <h2 id="arcs">Arcs Breakdown</h2>
     <table>
         <thead>
             <tr><th>Arc</th><th>Epics</th><th>Theme</th><th>Status</th><th>Done</th></tr>
@@ -160,7 +206,7 @@
         </tbody>
     </table>
 
-    <h2>What's Verified Here vs Gated</h2>
+    <h2 id="verified">What's Verified Here vs Gated</h2>
     <h3>Verified on arm64 Mac (cargo test + openssl + bash -n)</h3>
     <ul>
         <li>All DDD fitness gates (76 tests enforcing architectural invariants)</li>
@@ -179,7 +225,7 @@
         <li>YDB/IPFS federation failover</li>
     </ul>
 
-    <h2>Architecture</h2>
+    <h2 id="architecture">Architecture</h2>
     <p>DDD hexagonal architecture with <strong>14 Rust crates</strong> (bounded contexts),
        enforced by <strong>76 fitness tests</strong> including ratchet-based burn-down of legacy I/O leaks.
        Domain logic is pure (no I/O); all external interactions through port traits with adapters.</p>
@@ -202,10 +248,10 @@
         </tbody>
     </table>
 
-    <h2>Full Analysis</h2>
+    <h2 id="analysis">Full Analysis</h2>
     <p>Detailed breakdown: <a href="Итоговый-Анализ-Эпиков.md">Итоговый-Анализ-Эпиков.md</a> (Russian)</p>
 
-    <h2>Оценка времени и стоимости разработки Immutable Linux</h2>
+    <h2 id="cost">Оценка времени и стоимости разработки Immutable Linux</h2>
     <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1rem;">
         Оценить стоимость разработки «аналога Flatcar и Red Hat» в точных цифрах без детального ТЗ невозможно,
         но можно дать структурированный диапазон и логику расчёта на основе типичных проектов в этой области.
